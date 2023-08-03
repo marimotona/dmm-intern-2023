@@ -16,12 +16,21 @@ type (
 	account struct {
 		db *sqlx.DB
 	}
+
+	// handler struct {
+	// 	ar repository.Account
+	// }
 )
 
 // Create accout repository
 func NewAccount(db *sqlx.DB) repository.Account {
 	return &account{db: db}
 }
+
+// Create HTTP request Handler
+// func NewHandler(ar repository.Account) *handler {
+// 	return &handler{ar: ar}
+// }
 
 // FindByUsername : ユーザ名からユーザを取得
 func (r *account) FindByUsername(ctx context.Context, username string) (*object.Account, error) {
@@ -36,4 +45,47 @@ func (r *account) FindByUsername(ctx context.Context, username string) (*object.
 	}
 
 	return entity, nil
+}
+
+func (r *account) CreateUser(ctx context.Context, a *object.Account) error {
+	query := `
+		INSERT INTO account (username, password_hash)
+		VALUES (?, ?)
+	`
+
+	_, err := r.db.ExecContext(ctx, query, a.Username, a.PasswordHash)
+	if err != nil {
+		return fmt.Errorf("faild to insert account into db: %w", err)
+	}
+	return nil
+}
+
+// docker lsで、DBの確認できる
+
+//ここで、定義した処理ごと、ファイルを作成していく
+// create.go get.go的な感じで
+
+func (r *account) GetUserAccounts(ctx context.Context, username string) ([]*object.Account, error) {
+	query := `SELECT * FROM account WHERE username = ?`
+
+	rows, err := r.db.QueryxContext(ctx, query, username)
+	if err != nil {
+		return nil, fmt.Errorf("faild to get user accounts: %w", err)
+	}
+	defer rows.Close()
+
+	var accounts []*object.Account
+
+	for rows.Next() {
+		account := new(object.Account)
+		err := rows.StructScan(account)
+
+		if err != nil {
+			return nil, fmt.Errorf("faild to scan: %w", err)
+		}
+
+		accounts = append(accounts, account)
+	}
+
+	return accounts, nil
 }
