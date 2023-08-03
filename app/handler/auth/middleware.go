@@ -9,7 +9,7 @@ import (
 	"yatter-backend-go/app/domain/repository"
 )
 
-var contextKey = new(struct{})
+var contextKey = new(struct{}) //小文字は、パッケージプライベート
 
 // Auth by header
 func Middleware(ar repository.Account) func(http.Handler) http.Handler {
