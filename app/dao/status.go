@@ -2,21 +2,22 @@ package dao
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"time"
 	"yatter-backend-go/app/domain/object"
 	"yatter-backend-go/app/domain/repository"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type (
 	status struct {
-		db *sql.DB
+		db *sqlx.DB
 	}
 )
 
-func NewStatus(db *sql.DB) repository.Status {
+func NewStatus(db *sqlx.DB) repository.Status {
 	return &status{db: db}
 }
 
