@@ -41,3 +41,24 @@ func (r *status) AddStatus(ctx context.Context, a *object.Account, s *object.Sta
 	}
 	return id, nil
 }
+
+func (r *status) FindByID(ctx context.Context, id int64) (*object.Status, error) {
+	statusQuery := `SELECT id, account_id, content, create_at FROM status WHERE id = ?`
+	s := &object.Status{}
+	err := r.db.GetContext(ctx, s, statusQuery, id)
+	if err != nil {
+		return nil, fmt.Errorf("faild to get the status: %w", err)
+	}
+
+	fmt.Println(`😱😱😱`)
+
+	accountQuery := `SELECT id, username, create_at FROM account WHERE id = ?`
+	a := &object.Account{}
+	err = r.db.GetContext(ctx, a, accountQuery, s.AccountID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get the account: %w", err)
+	}
+	s.Account = a
+	return s, nil
+
+}
