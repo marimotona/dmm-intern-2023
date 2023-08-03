@@ -13,6 +13,4 @@ type Account interface {
 	CreateUser(ctx context.Context, a *object.Account) error
 
 	GetUserAccounts(ctx context.Context, username string) ([]*object.Account, error)
-
-	AddStatus(ctx context.Context, a *object.Account) error
 }

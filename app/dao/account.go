@@ -60,11 +60,6 @@ func (r *account) CreateUser(ctx context.Context, a *object.Account) error {
 	return nil
 }
 
-// docker lsで、DBの確認できる
-
-//ここで、定義した処理ごと、ファイルを作成していく
-// create.go get.go的な感じで
-
 func (r *account) GetUserAccounts(ctx context.Context, username string) ([]*object.Account, error) {
 	query := `SELECT * FROM account WHERE username = ?`
 
